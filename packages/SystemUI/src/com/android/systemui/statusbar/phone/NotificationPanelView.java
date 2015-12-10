@@ -828,7 +828,7 @@ public class NotificationPanelView extends PanelView implements
                         || event.isButtonPressed(MotionEvent.BUTTON_TERTIARY));
 
         final boolean oneFingerQuickSettingsPullDown = (Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 1) == 1);
+                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0) == 1);
         if (oneFingerQuickSettingsPullDown) {
             final float w = getMeasuredWidth();
             final float x = event.getX();
@@ -2443,7 +2443,7 @@ public class NotificationPanelView extends PanelView implements
         public void update() {
             ContentResolver resolver = mContext.getContentResolver();
             mOneFingerQuickSettingsIntercept = Settings.System.getInt(
-                    resolver, Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 1) == 1;
+                    resolver, Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0) == 1;
         }
     }
 }

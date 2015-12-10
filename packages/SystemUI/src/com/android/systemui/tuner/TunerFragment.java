@@ -196,7 +196,7 @@ public class TunerFragment extends PreferenceFragment {
     private void updateOneFingerQuickSettingsPullDown() {
         mOneFingerQuickSettingsPullDown.setOnPreferenceChangeListener(null);
         mOneFingerQuickSettingsPullDown.setChecked(Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 1) == 1);
+                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0) == 1);
         mOneFingerQuickSettingsPullDown.setOnPreferenceChangeListener(mOneFingerQuickSettingsPullDownChange);
     }
 

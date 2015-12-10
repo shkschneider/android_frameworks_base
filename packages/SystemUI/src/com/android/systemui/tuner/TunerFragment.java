@@ -51,6 +51,7 @@ public class TunerFragment extends PreferenceFragment {
     private static final String KEY_BATTERY_PCT = "battery_pct";
     private static final String KEY_ONE_FINGER_QUICKSETTINGS_PULL_DOWN =
         "one_finger_quicksettings_pull_down";
+    private static final String KEY_PIN_SCRAMBLE = "pin_scramble";
 
     public static final String SETTING_SEEN_TUNER_WARNING = "seen_tuner_warning";
 
@@ -60,6 +61,7 @@ public class TunerFragment extends PreferenceFragment {
 
     private SwitchPreference mBatteryPct;
     private SwitchPreference mOneFingerQuickSettingsPullDown;
+    private SwitchPreference mPinScramble;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +92,7 @@ public class TunerFragment extends PreferenceFragment {
         });
         mBatteryPct = (SwitchPreference) findPreference(KEY_BATTERY_PCT);
         mOneFingerQuickSettingsPullDown = (SwitchPreference) findPreference(KEY_ONE_FINGER_QUICKSETTINGS_PULL_DOWN);
+        mPinScramble = (SwitchPreference) findPreference(KEY_PIN_SCRAMBLE);
         if (Settings.Secure.getInt(getContext().getContentResolver(), SETTING_SEEN_TUNER_WARNING,
                 0) == 0) {
             new AlertDialog.Builder(getContext())
@@ -110,6 +113,7 @@ public class TunerFragment extends PreferenceFragment {
         super.onResume();
         updateBatteryPct();
         updateOneFingerQuickSettingsPullDown();
+        updatePinScramble();
         getContext().getContentResolver().registerContentObserver(
                 System.getUriFor(SHOW_PERCENT_SETTING), false, mSettingObserver);
 
@@ -189,6 +193,13 @@ public class TunerFragment extends PreferenceFragment {
         mOneFingerQuickSettingsPullDown.setOnPreferenceChangeListener(mOneFingerQuickSettingsPullDownChange);
     }
 
+    private void updatePinScramble() {
+        mPinScramble.setOnPreferenceChangeListener(null);
+        mPinScramble.setChecked(Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.LOCKSCREEN_PIN_SCRAMBLE, 0) == 1);
+        mPinScramble.setOnPreferenceChangeListener(mPinScrambleChange);
+    }
+
     private final class SettingObserver extends ContentObserver {
         public SettingObserver() {
             super(new Handler());
@@ -199,6 +210,7 @@ public class TunerFragment extends PreferenceFragment {
             super.onChange(selfChange, uri, userId);
             updateBatteryPct();
             updateOneFingerQuickSettingsPullDown();
+            updatePinScramble();
         }
     }
 
@@ -216,6 +228,14 @@ public class TunerFragment extends PreferenceFragment {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
             System.putInt(getContext().getContentResolver(), Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, v ? 1 : 0);
+            return true;
+        }
+    };
+    private final OnPreferenceChangeListener mPinScrambleChange = new OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final boolean v = (Boolean) newValue;
+            System.putInt(getContext().getContentResolver(), Settings.System.LOCKSCREEN_PIN_SCRAMBLE, v ? 1 : 0);
             return true;
         }
     };

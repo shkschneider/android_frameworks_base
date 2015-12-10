@@ -2334,6 +2334,12 @@ public final class Settings {
             "one_finger_quicksettings_pull_down";
 
         /**
+         * Whether to scramble a pin unlock layout
+         * @hide
+         */
+        public static final String LOCKSCREEN_PIN_SCRAMBLE = "lockscreen_pin_scramble";
+
+        /**
          * A formatted string of the next alarm that is set, or the empty string
          * if there is no alarm set.
          *

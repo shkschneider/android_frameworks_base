@@ -98,7 +98,19 @@ public class NumPadKey extends ViewGroup {
         mDigitText.setText(Integer.toString(mDigit));
         mKlondikeText = (TextView) findViewById(R.id.klondike_text);
 
+        updateText();
+        setBackground(mContext.getDrawable(R.drawable.ripple_drawable));
+        setContentDescription(mDigitText.getText().toString());
+    }
+
+    public void setDigit(int digit) {
+        mDigit = digit;
+        updateText();
+    }
+
+    private void updateText() {
         if (mDigit >= 0) {
+            mDigitText.setText(Integer.toString(mDigit));
             if (sKlondike == null) {
                 sKlondike = getResources().getStringArray(R.array.lockscreen_num_pad_klondike);
             }
@@ -112,9 +124,6 @@ public class NumPadKey extends ViewGroup {
                 }
             }
         }
-
-        setBackground(mContext.getDrawable(R.drawable.ripple_drawable));
-        setContentDescription(mDigitText.getText().toString());
     }
 
     @Override

@@ -1051,6 +1051,11 @@
 
     <!-- Summary to enable one finger quick settings pull down -->
     <string name="one_finger_quicksettings_pull_down_summary">Allows it with only one finger (from the right of the status bar)</string>
+    <!-- Preference to scramble the PIN layout on lockscreen -->
+    <string name="pin_scramble">PIN scramble</string>
+
+    <!-- Summary for scrambled PIN layout on lockscreen -->
+    <string name="pin_scramble_summary">Scrambles the PIN layout on lockscreen</string>
 
     <!-- Name of quick settings -->
     <string name="quick_settings">Quick Settings</string>

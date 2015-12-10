@@ -217,8 +217,6 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
     private NotificationManager mNotificationManager;
     private KeyguardManager mKeyguardManager;
     private StatusBarManagerService mStatusBar;
-    private Notification.Builder mImeSwitcherNotification;
-    private PendingIntent mImeSwitchPendingIntent;
     private boolean mShowOngoingImeSwitcherForPhones;
     private boolean mNotificationShown;
     private final boolean mImeSelectedOnBoot;
@@ -677,7 +675,7 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
                 boolean changed = false;
 
                 if (curIm != null) {
-                    int change = isPackageDisappearing(curIm.getPackageName()); 
+                    int change = isPackageDisappearing(curIm.getPackageName());
                     if (change == PACKAGE_TEMPORARY_CHANGE
                             || change == PACKAGE_PERMANENT_CHANGE) {
                         ServiceInfo si = null;
@@ -787,16 +785,6 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
 
         Bundle extras = new Bundle();
         extras.putBoolean(Notification.EXTRA_ALLOW_DURING_SETUP, true);
-        mImeSwitcherNotification = new Notification.Builder(mContext)
-            .setSmallIcon(com.android.internal.R.drawable.ic_notification_ime_default)
-            .setWhen(0)
-            .setOngoing(true)
-            .addExtras(extras)
-            .setCategory(Notification.CATEGORY_SYSTEM)
-            .setColor(com.android.internal.R.color.system_notification_accent_color);
-
-        Intent intent = new Intent(Settings.ACTION_SHOW_INPUT_METHOD_PICKER);
-        mImeSwitchPendingIntent = PendingIntent.getBroadcast(mContext, 0, intent, 0);
 
         mShowOngoingImeSwitcherForPhones = false;
 
@@ -1761,53 +1749,7 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
             return;
         }
 
-        // TODO: Move this clearing calling identity block to setImeWindowStatus after making sure
-        // all updateSystemUi happens on system previlege.
-        final long ident = Binder.clearCallingIdentity();
-        try {
-            // apply policy for binder calls
-            if (vis != 0 && isKeyguardLocked() && !mCurClientInKeyguard) {
-                vis = 0;
-            }
-            // mImeWindowVis should be updated before calling shouldShowImeSwitcherLocked().
-            final boolean needsToShowImeSwitcher = shouldShowImeSwitcherLocked(vis);
-            if (mStatusBar != null) {
-                mStatusBar.setImeWindowStatus(token, vis, backDisposition,
-                        needsToShowImeSwitcher);
-            }
-            final InputMethodInfo imi = mMethodMap.get(mCurMethodId);
-            if (imi != null && needsToShowImeSwitcher) {
-                // Used to load label
-                final CharSequence title = mRes.getText(
-                        com.android.internal.R.string.select_input_method);
-                final CharSequence summary = InputMethodUtils.getImeAndSubtypeDisplayName(
-                        mContext, imi, mCurrentSubtype);
-                mImeSwitcherNotification.setContentTitle(title)
-                        .setContentText(summary)
-                        .setContentIntent(mImeSwitchPendingIntent);
-                if ((mNotificationManager != null)
-                        && !mWindowManagerService.hasNavigationBar()) {
-                    if (DEBUG) {
-                        Slog.d(TAG, "--- show notification: label =  " + summary);
-                    }
-                    mNotificationManager.notifyAsUser(null,
-                            com.android.internal.R.string.select_input_method,
-                            mImeSwitcherNotification.build(), UserHandle.ALL);
-                    mNotificationShown = true;
-                }
-            } else {
-                if (mNotificationShown && mNotificationManager != null) {
-                    if (DEBUG) {
-                        Slog.d(TAG, "--- hide notification");
-                    }
-                    mNotificationManager.cancelAsUser(null,
-                            com.android.internal.R.string.select_input_method, UserHandle.ALL);
-                    mNotificationShown = false;
-                }
-            }
-        } finally {
-            Binder.restoreCallingIdentity(ident);
-        }
+        // Removed IME notification
     }
 
     @Override
@@ -3216,7 +3158,7 @@ public class InputMethodManagerService extends IInputMethodManager.Stub
                         "Requires permission "
                         + android.Manifest.permission.WRITE_SECURE_SETTINGS);
             }
-            
+
             long ident = Binder.clearCallingIdentity();
             try {
                 return setInputMethodEnabledLocked(id, enabled);

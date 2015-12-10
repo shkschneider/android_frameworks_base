@@ -73,6 +73,12 @@
         android:persistent="false" />
 
     <SwitchPreference
+        android:key="one_finger_quicksettings_pull_down"
+        android:title="@string/one_finger_quicksettings_pull_down"
+        android:summary="@string/one_finger_quicksettings_pull_down_summary"
+        android:persistent="false" />
+
+    <SwitchPreference
         android:key="pin_scramble"
         android:title="@string/pin_scramble"
         android:summary="@string/pin_scramble_summary"

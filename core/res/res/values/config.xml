@@ -2259,7 +2259,7 @@
 
     <!-- Flag indicating device support for EAP SIM, AKA, AKA' -->
     <bool name="config_eap_sim_based_auth_supported">true</bool>
- 
+
     <!-- How long history of previous vibrations should be kept for the dumpsys. -->
     <integer name="config_previousVibrationsDumpLimit">20</integer>
 
@@ -2269,5 +2269,9 @@
          Array of "code#,retry#"  -->
     <string-array name="config_cell_retries_per_error_code">
     </string-array>
+
+    <!-- Timeout in MS for how long you have to long-press the back key to
+         kill the foreground app. -->
+    <integer name="config_backKillTimeout">2000</integer>
 
 </resources>

@@ -2327,6 +2327,13 @@ public final class Settings {
             "lock_pattern_tactile_feedback_enabled";
 
         /**
+         * Whether to enable one finger quick settings pull down
+         * @hide
+         */
+        public static final String ONE_FINGER_QUICKSETTINGS_PULL_DOWN =
+            "one_finger_quicksettings_pull_down";
+
+        /**
          * A formatted string of the next alarm that is set, or the empty string
          * if there is no alarm set.
          *

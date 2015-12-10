@@ -49,6 +49,8 @@ public class TunerFragment extends PreferenceFragment {
     private static final String KEY_QS_TUNER = "qs_tuner";
     private static final String KEY_DEMO_MODE = "demo_mode";
     private static final String KEY_BATTERY_PCT = "battery_pct";
+    private static final String KEY_ONE_FINGER_QUICKSETTINGS_PULL_DOWN =
+        "one_finger_quicksettings_pull_down";
 
     public static final String SETTING_SEEN_TUNER_WARNING = "seen_tuner_warning";
 
@@ -57,6 +59,7 @@ public class TunerFragment extends PreferenceFragment {
     private final SettingObserver mSettingObserver = new SettingObserver();
 
     private SwitchPreference mBatteryPct;
+    private SwitchPreference mOneFingerQuickSettingsPullDown;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +89,7 @@ public class TunerFragment extends PreferenceFragment {
             }
         });
         mBatteryPct = (SwitchPreference) findPreference(KEY_BATTERY_PCT);
+        mOneFingerQuickSettingsPullDown = (SwitchPreference) findPreference(KEY_ONE_FINGER_QUICKSETTINGS_PULL_DOWN);
         if (Settings.Secure.getInt(getContext().getContentResolver(), SETTING_SEEN_TUNER_WARNING,
                 0) == 0) {
             new AlertDialog.Builder(getContext())
@@ -105,6 +109,7 @@ public class TunerFragment extends PreferenceFragment {
     public void onResume() {
         super.onResume();
         updateBatteryPct();
+        updateOneFingerQuickSettingsPullDown();
         getContext().getContentResolver().registerContentObserver(
                 System.getUriFor(SHOW_PERCENT_SETTING), false, mSettingObserver);
 
@@ -177,6 +182,13 @@ public class TunerFragment extends PreferenceFragment {
         mBatteryPct.setOnPreferenceChangeListener(mBatteryPctChange);
     }
 
+    private void updateOneFingerQuickSettingsPullDown() {
+        mOneFingerQuickSettingsPullDown.setOnPreferenceChangeListener(null);
+        mOneFingerQuickSettingsPullDown.setChecked(Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0) == 1);
+        mOneFingerQuickSettingsPullDown.setOnPreferenceChangeListener(mOneFingerQuickSettingsPullDownChange);
+    }
+
     private final class SettingObserver extends ContentObserver {
         public SettingObserver() {
             super(new Handler());
@@ -186,6 +198,7 @@ public class TunerFragment extends PreferenceFragment {
         public void onChange(boolean selfChange, Uri uri, int userId) {
             super.onChange(selfChange, uri, userId);
             updateBatteryPct();
+            updateOneFingerQuickSettingsPullDown();
         }
     }
 
@@ -198,4 +211,13 @@ public class TunerFragment extends PreferenceFragment {
             return true;
         }
     };
+    private final OnPreferenceChangeListener mOneFingerQuickSettingsPullDownChange = new OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final boolean v = (Boolean) newValue;
+            System.putInt(getContext().getContentResolver(), Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, v ? 1 : 0);
+            return true;
+        }
+    };
+
 }

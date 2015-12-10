@@ -19,6 +19,7 @@ package com.android.keyguard;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.RenderNode;
 import android.view.RenderNodeAnimator;
@@ -109,25 +110,31 @@ public class KeyguardPINView extends KeyguardPinBasedInputView {
                 new View[]{
                         null, mEcaView, null
                 }};
-        Collections.shuffle(sNumbers);
-        // get all children who are NumPadKey's
-        LinearLayout container = (LinearLayout) findViewById(R.id.container);
-        List<NumPadKey> views = new ArrayList<NumPadKey>();
-        for (int i = 0; i < container.getChildCount(); i++) {
-            if (container.getChildAt(i) instanceof LinearLayout) {
-                LinearLayout nestedLayout = ((LinearLayout) container.getChildAt(i));
-                for (int j = 0; j < nestedLayout.getChildCount(); j++) {
-                    View view = nestedLayout.getChildAt(j);
-                    if (view.getClass() == NumPadKey.class) {
-                        views.add((NumPadKey) view);
+
+        boolean scramblePin = (Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.LOCKSCREEN_PIN_SCRAMBLE, 0) == 1);
+
+        if (scramblePin) {
+            Collections.shuffle(sNumbers);
+            // get all children who are NumPadKey's
+            LinearLayout container = (LinearLayout) findViewById(R.id.container);
+            List<NumPadKey> views = new ArrayList<NumPadKey>();
+            for (int i = 0; i < container.getChildCount(); i++) {
+                if (container.getChildAt(i) instanceof LinearLayout) {
+                    LinearLayout nestedLayout = ((LinearLayout) container.getChildAt(i));
+                    for (int j = 0; j < nestedLayout.getChildCount(); j++) {
+                        View view = nestedLayout.getChildAt(j);
+                        if (view.getClass() == NumPadKey.class) {
+                            views.add((NumPadKey) view);
+                        }
                     }
                 }
             }
-        }
-        // reset the digits in the views
-        for (int i = 0; i < sNumbers.size(); i++) {
-            NumPadKey view = views.get(i);
-            view.setDigit(sNumbers.get(i));
+            // reset the digits in the views
+            for (int i = 0; i < sNumbers.size(); i++) {
+                NumPadKey view = views.get(i);
+                view.setDigit(sNumbers.get(i));
+            }
         }
     }
 

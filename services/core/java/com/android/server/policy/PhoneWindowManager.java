@@ -411,7 +411,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     boolean mHasSoftInput = false;
     boolean mTranslucentDecorEnabled = true;
     boolean mUseTvRouting;
-    int mBackKillTimeout;
+    int mBackKillTimeout = 2000;
 
     int mPointerLocationMode = 0; // guarded by mLock
 
@@ -1505,8 +1505,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 com.android.internal.R.integer.config_shortPressOnSleepBehavior);
 
         mUseTvRouting = AudioSystem.getPlatformType(mContext) == AudioSystem.PLATFORM_TELEVISION;
-
-        mBackKillTimeout = mContext.getResources().getInteger(com.android.internal.R.integer.config_backKillTimeout);
 
         readConfigurationDependentBehaviors();
 

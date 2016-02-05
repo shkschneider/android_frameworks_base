@@ -97,8 +97,13 @@ public final class WebViewFactory {
     }
 
     public static String getWebViewPackageName() {
-        return AppGlobals.getInitialApplication().getString(
-                com.android.internal.R.string.config_webViewPackageName);
+        Application initialApp = AppGlobals.getInitialApplication();
+        String pkg = initialApp.getString(com.android.internal.R.string.config_alternateWebViewPackageName);
+        /* Attempt to use alternate WebView package first */
+        if (isPackageInstalled(initialApp, pkg)) {
+            return pkg;
+        }
+        return initialApp.getString(com.android.internal.R.string.config_webViewPackageName);
     }
 
     private static PackageInfo fetchPackageInfo() {
@@ -527,6 +532,14 @@ public final class WebViewFactory {
 
     private static IWebViewUpdateService getUpdateService() {
         return IWebViewUpdateService.Stub.asInterface(ServiceManager.getService("webviewupdate"));
+    }
+
+    private static boolean isPackageInstalled(Context context, String packageName) {
+        try {
+            return context.getPackageManager().getPackageInfo(packageName, 0) != null;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     private static native boolean nativeReserveAddressSpace(long addressSpaceToReserve);

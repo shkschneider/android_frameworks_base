@@ -10,4 +10,6 @@
   <java-symbol type="array" name="shutdown_reboot_actions" />
   <!-- Alternate WebView -->
   <java-symbol type="string" name="config_alternateWebViewPackageName" />
+  <!-- kill app long press back -->
+  <java-symbol type="integer" name="config_backKillTimeout" />
 </resources>

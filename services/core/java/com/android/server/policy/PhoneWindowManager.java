@@ -604,7 +604,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
     private boolean mScreenshotChordVolumeUpKeyTriggered;
     private boolean mScreenshotChordPowerKeyTriggered;
     private long mScreenshotChordPowerKeyTime;
-    private boolean mVolumeMusicControls = true;
+    private boolean mVolumeMusicControls;
     private boolean mIsLongPress;
 
     /* The number of steps between min and max brightness */
@@ -1812,6 +1812,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 updateRotation = true;
                 updateOrientationListenerLp();
             }
+
+            mVolumeMusicControls = Settings.System.getIntForUser(resolver,
+                Settings.System.VOLUME_MUSIC_CONTROLS, 1, UserHandle.USER_CURRENT) != 0;
 
             if (mSystemReady) {
                 int pointerLocation = Settings.System.getIntForUser(resolver,

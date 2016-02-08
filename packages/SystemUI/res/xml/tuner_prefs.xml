@@ -84,6 +84,12 @@
         android:summary="@string/pin_scramble_summary"
         android:persistent="false" />
 
+    <SwitchPreference
+        android:key="volume_rocker"
+        android:title="@string/volume_rocker"
+        android:summary="@string/volume_rocker_summary"
+        android:persistent="false" />
+
     <Preference
         android:key="demo_mode"
         android:title="@string/demo_mode" />

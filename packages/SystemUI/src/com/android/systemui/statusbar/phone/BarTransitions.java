@@ -122,7 +122,6 @@ public class BarTransitions {
         private final int mOpaque;
         private final int mSemiTransparent;
         private final int mTransparent;
-        private final int mWarning;
         private final Drawable mGradient;
         private final TimeInterpolator mInterpolator;
 
@@ -143,12 +142,10 @@ public class BarTransitions {
                 mOpaque = 0xff0000ff;
                 mSemiTransparent = 0x7f0000ff;
                 mTransparent = 0x2f0000ff;
-                mWarning = 0xffff0000;
             } else {
                 mOpaque = context.getColor(R.color.system_bar_background_opaque);
                 mSemiTransparent = context.getColor(R.color.system_bar_background_semi_transparent);
                 mTransparent = context.getColor(R.color.system_bar_background_transparent);
-                mWarning = context.getColor(com.android.internal.R.color.battery_saver_mode_color);
             }
             mGradient = context.getDrawable(gradientResourceId);
             mInterpolator = new LinearInterpolator();
@@ -199,9 +196,7 @@ public class BarTransitions {
         @Override
         public void draw(Canvas canvas) {
             int targetGradientAlpha = 0, targetColor = 0;
-            if (mMode == MODE_WARNING) {
-                targetColor = mWarning;
-            } else if (mMode == MODE_TRANSLUCENT) {
+            if (mMode == MODE_TRANSLUCENT) {
                 targetColor = mSemiTransparent;
             } else if (mMode == MODE_SEMI_TRANSPARENT) {
                 targetColor = mSemiTransparent;

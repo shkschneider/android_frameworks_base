@@ -207,7 +207,7 @@ public class TunerFragment extends PreferenceFragment {
     private void updateVolumeRocker() {
         mVolumeRocker.setOnPreferenceChangeListener(null);
         mVolumeRocker.setChecked(Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.VOLUME_MUSIC_CONTROLS, 1) == 1);
+                Settings.System.VOLUME_MUSIC_CONTROLS, 0) == 1);
         mVolumeRocker.setOnPreferenceChangeListener(mVolumeRockerChange);
     }
 

@@ -751,6 +751,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             resolver.registerContentObserver(Settings.Global.getUriFor(
                     Settings.Global.POLICY_CONTROL), false, this,
                     UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.Secure.getUriFor(
+                    Settings.System.VOLUME_MUSIC_CONTROLS), false, this,
+                    UserHandle.USER_ALL);
             updateSettings();
         }
 
@@ -1814,7 +1817,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             }
 
             mVolumeMusicControls = Settings.System.getIntForUser(resolver,
-                Settings.System.VOLUME_MUSIC_CONTROLS, 1, UserHandle.USER_CURRENT) != 0;
+                Settings.System.VOLUME_MUSIC_CONTROLS, 0, UserHandle.USER_CURRENT) != 0;
 
             if (mSystemReady) {
                 int pointerLocation = Settings.System.getIntForUser(resolver,
@@ -5102,47 +5105,40 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         }
                     }
                 }
-                // Disable music and volume control when used as wake key
                 if ((result & ACTION_PASS_TO_USER) == 0) {
-                    boolean mayChangeVolume = false;
                     if (isMusicActive()) {
-                        if (mVolumeMusicControls && (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE)) {
-                            // Detect long key presses.
+                        if (mVolumeMusicControls) {
                             if (down) {
-                                mIsLongPress = false;
-                                // TODO: Long press of MUTE could be mapped to KEYCODE_MEDIA_PLAY_PAUSE
-                                int newKeyCode = event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP ?
+                                if (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE) {
+                                    mIsLongPress = false;
+                                    int newKeyCode = event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP ?
                                         KeyEvent.KEYCODE_MEDIA_NEXT : KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-                                scheduleLongPressKeyEvent(event, newKeyCode);
-                                // Consume key down events of all presses.
-                                break;
+                                    final Message msg = mHandler.obtainMessage(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK,
+                                        new KeyEvent(event.getDownTime(), event.getEventTime(), event.getAction(), newKeyCode, 0));
+                                    msg.setAsynchronous(true);
+                                    mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
+                                    break;
+                                }
                             } else {
                                 mHandler.removeMessages(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK);
-                                // Consume key up events of long presses only.
                                 if (mIsLongPress) {
                                     break;
                                 }
-                                // Change volume only on key up events of short presses.
-                                mayChangeVolume = true;
                             }
-                        } else {
-                            // Long key press detection not applicable, change volume only
-                            // on key down events
-                            mayChangeVolume = down;
                         }
-                        if (mayChangeVolume) {
-                            // If we aren't passing to the user and no one else
-                            // handled it send it to the session manager to figure
-                            // out.
-                            // Rewrite the event to use key-down as sendVolumeKeyEvent will
-                            // only change the volume on key down.
-                            KeyEvent newEvent = new KeyEvent(KeyEvent.ACTION_DOWN, keyCode);
+                    } else {
+                        if (mUseTvRouting) {
+                            dispatchDirectAudioEvent(event);
+                        } else {
+                            // If we aren't passing to the user and no one else handled it
+                            // sent it to the session manager to figure out.
                             MediaSessionLegacyHelper.getHelper(mContext)
-                                .sendVolumeKeyEvent(newEvent, true);
-                         }
-                     }
-                 }
-                 break;
+                                .sendVolumeKeyEvent(event, true);
+                        }
+                        break;
+                    }
+                }
+                break;
             }
 
             case KeyEvent.KEYCODE_ENDCALL: {

@@ -1057,6 +1057,12 @@
     <!-- Summary for scrambled PIN layout on lockscreen -->
     <string name="pin_scramble_summary">Scrambles the PIN layout on lockscreen</string>
 
+    <!-- Preference to enable volume rocker -->
+    <string name="volume_rocker">Volume rocker</string>
+
+    <!-- Summary to enable volume rocker -->
+    <string name="volume_rocker_summary">Allows to seek audio track while screen if off (soft-reboot required)</string>
+
     <!-- Name of quick settings -->
     <string name="quick_settings">Quick Settings</string>
 

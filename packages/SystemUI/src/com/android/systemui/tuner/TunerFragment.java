@@ -52,6 +52,7 @@ public class TunerFragment extends PreferenceFragment {
     private static final String KEY_ONE_FINGER_QUICKSETTINGS_PULL_DOWN =
         "one_finger_quicksettings_pull_down";
     private static final String KEY_PIN_SCRAMBLE = "pin_scramble";
+    private static final String KEY_VOLUME_ROCKER = "volume_rocker";
 
     public static final String SETTING_SEEN_TUNER_WARNING = "seen_tuner_warning";
 
@@ -62,6 +63,7 @@ public class TunerFragment extends PreferenceFragment {
     private SwitchPreference mBatteryPct;
     private SwitchPreference mOneFingerQuickSettingsPullDown;
     private SwitchPreference mPinScramble;
+    private SwitchPreference mVolumeRocker;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +108,7 @@ public class TunerFragment extends PreferenceFragment {
                         }
                     }).show();
         }
+        mVolumeRocker = (SwitchPreference) findPreference(KEY_VOLUME_ROCKER);
     }
 
     @Override
@@ -114,6 +117,7 @@ public class TunerFragment extends PreferenceFragment {
         updateBatteryPct();
         updateOneFingerQuickSettingsPullDown();
         updatePinScramble();
+        updateVolumeRocker();
         getContext().getContentResolver().registerContentObserver(
                 System.getUriFor(SHOW_PERCENT_SETTING), false, mSettingObserver);
 
@@ -200,6 +204,13 @@ public class TunerFragment extends PreferenceFragment {
         mPinScramble.setOnPreferenceChangeListener(mPinScrambleChange);
     }
 
+    private void updateVolumeRocker() {
+        mVolumeRocker.setOnPreferenceChangeListener(null);
+        mVolumeRocker.setChecked(Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.VOLUME_MUSIC_CONTROLS, 0) == 1);
+        mVolumeRocker.setOnPreferenceChangeListener(mVolumeRockerChange);
+    }
+
     private final class SettingObserver extends ContentObserver {
         public SettingObserver() {
             super(new Handler());
@@ -211,6 +222,7 @@ public class TunerFragment extends PreferenceFragment {
             updateBatteryPct();
             updateOneFingerQuickSettingsPullDown();
             updatePinScramble();
+            updateVolumeRocker();
         }
     }
 
@@ -236,6 +248,14 @@ public class TunerFragment extends PreferenceFragment {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
             System.putInt(getContext().getContentResolver(), Settings.System.LOCKSCREEN_PIN_SCRAMBLE, v ? 1 : 0);
+            return true;
+        }
+    };
+    private final OnPreferenceChangeListener mVolumeRockerChange = new OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final boolean v = (Boolean) newValue;
+            System.putInt(getContext().getContentResolver(), Settings.System.VOLUME_MUSIC_CONTROLS, v ? 1 : 0);
             return true;
         }
     };

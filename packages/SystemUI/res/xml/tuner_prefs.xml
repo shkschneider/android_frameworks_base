@@ -90,6 +90,12 @@
         android:summary="@string/volume_rocker_summary"
         android:persistent="false" />
 
+    <SwitchPreference
+        android:key="brightness_slider"
+        android:title="@string/brightness_slider"
+        android:summary="@string/brightness_slider_summary"
+        android:persistent="false" />
+
     <Preference
         android:key="demo_mode"
         android:title="@string/demo_mode" />

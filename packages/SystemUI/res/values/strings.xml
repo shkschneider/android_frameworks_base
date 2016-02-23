@@ -1063,6 +1063,12 @@
     <!-- Summary to enable volume rocker -->
     <string name="volume_rocker_summary">Allows to seek audio track while screen if off (soft-reboot required)</string>
 
+    <!-- Preference to enable brightness slider -->
+    <string name="brightness_slider">Brightness slider</string>
+
+    <!-- Summary to enable brightness slider -->
+    <string name="brightness_slider_summary">Should the brightness slider be shown in Quick Settings</string>
+
     <!-- Name of quick settings -->
     <string name="quick_settings">Quick Settings</string>
 

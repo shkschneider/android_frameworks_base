@@ -53,6 +53,7 @@ public class TunerFragment extends PreferenceFragment {
         "one_finger_quicksettings_pull_down";
     private static final String KEY_PIN_SCRAMBLE = "pin_scramble";
     private static final String KEY_VOLUME_ROCKER = "volume_rocker";
+    private static final String KEY_BRIGHTNESS_SLIDER = "brightness_slider";
 
     public static final String SETTING_SEEN_TUNER_WARNING = "seen_tuner_warning";
 
@@ -64,6 +65,7 @@ public class TunerFragment extends PreferenceFragment {
     private SwitchPreference mOneFingerQuickSettingsPullDown;
     private SwitchPreference mPinScramble;
     private SwitchPreference mVolumeRocker;
+    private SwitchPreference mBrightnessSlider;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +111,7 @@ public class TunerFragment extends PreferenceFragment {
                     }).show();
         }
         mVolumeRocker = (SwitchPreference) findPreference(KEY_VOLUME_ROCKER);
+        mBrightnessSlider = (SwitchPreference) findPreference(KEY_BRIGHTNESS_SLIDER);
     }
 
     @Override
@@ -118,6 +121,7 @@ public class TunerFragment extends PreferenceFragment {
         updateOneFingerQuickSettingsPullDown();
         updatePinScramble();
         updateVolumeRocker();
+        updateBrightnessSlider();
         getContext().getContentResolver().registerContentObserver(
                 System.getUriFor(SHOW_PERCENT_SETTING), false, mSettingObserver);
 
@@ -211,6 +215,13 @@ public class TunerFragment extends PreferenceFragment {
         mVolumeRocker.setOnPreferenceChangeListener(mVolumeRockerChange);
     }
 
+    private void updateBrightnessSlider() {
+        mBrightnessSlider.setOnPreferenceChangeListener(null);
+        mBrightnessSlider.setChecked(Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.SHOW_BRIGHTNESS_SLIDER, 1) == 1);
+        mBrightnessSlider.setOnPreferenceChangeListener(mBrightnessSliderChange);
+    }
+
     private final class SettingObserver extends ContentObserver {
         public SettingObserver() {
             super(new Handler());
@@ -256,6 +267,14 @@ public class TunerFragment extends PreferenceFragment {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
             System.putInt(getContext().getContentResolver(), Settings.System.VOLUME_MUSIC_CONTROLS, v ? 1 : 0);
+            return true;
+        }
+    };
+    private final OnPreferenceChangeListener mBrightnessSliderChange = new OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final boolean v = (Boolean) newValue;
+            System.putInt(getContext().getContentResolver(), Settings.System.SHOW_BRIGHTNESS_SLIDER, v ? 1 : 0);
             return true;
         }
     };

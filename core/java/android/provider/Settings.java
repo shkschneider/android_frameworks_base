@@ -3232,11 +3232,17 @@ public final class Settings {
          * the setting value. See an example above.
          */
 
-         /**
+        /**
          * Volume music controls
          * @hide
          */
         public static final String VOLUME_MUSIC_CONTROLS = "volume_music_controls";
+
+        /**
+         * Whether to show the brightness slider in quick settings panel.
+         * @hide
+         */
+        public static final String SHOW_BRIGHTNESS_SLIDER = "show_brightness_slider";
 
         /**
          * Settings to backup. This is here so that it's in the same place as the settings

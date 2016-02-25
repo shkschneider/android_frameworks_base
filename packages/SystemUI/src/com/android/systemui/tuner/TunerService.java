@@ -136,6 +136,10 @@ public class TunerService extends SystemUI {
         // A couple special cases.
         Settings.Global.putString(mContentResolver, DemoMode.DEMO_MODE_ALLOWED, null);
         Settings.System.putString(mContentResolver, BatteryMeterView.SHOW_PERCENT_SETTING, null);
+        Settings.System.putString(mContentResolver, Settings.System.LOCKSCREEN_PIN_SCRAMBLE, null);
+        Settings.System.putString(mContentResolver, Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, null);
+        Settings.System.putString(mContentResolver, Settings.System.VOLUME_MUSIC_CONTROLS, null);
+        Settings.System.putString(mContentResolver, Settings.System.SHOW_BRIGHTNESS_SLIDER, null);
         Intent intent = new Intent(DemoMode.ACTION_DEMO);
         intent.putExtra(DemoMode.EXTRA_COMMAND, DemoMode.COMMAND_EXIT);
         mContext.sendBroadcast(intent);

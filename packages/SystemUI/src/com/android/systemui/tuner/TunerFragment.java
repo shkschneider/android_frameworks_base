@@ -234,6 +234,7 @@ public class TunerFragment extends PreferenceFragment {
             updateOneFingerQuickSettingsPullDown();
             updatePinScramble();
             updateVolumeRocker();
+            updateBrightnessSlider();
         }
     }
 

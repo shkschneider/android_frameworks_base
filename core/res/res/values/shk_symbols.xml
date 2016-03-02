@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 /*
-** Copyright 2015 ShkMod
+** Copyright 2016 ShkMod
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 */
 -->
 <resources>
-  <!-- Reboot - Advanced Reboot -->
+
+  <!-- Advanced Reboot -->
   <java-symbol type="string" name="reboot_confirm" />
   <java-symbol type="string" name="reboot_title" />
   <java-symbol type="string" name="reboot_progress" />
@@ -25,4 +26,11 @@
   <java-symbol type="drawable" name="ic_lock_power_reboot" />
   <java-symbol type="array" name="shutdown_reboot_options" />
   <java-symbol type="array" name="shutdown_reboot_actions" />
+
+  <!-- Alternate WebView -->
+  <java-symbol type="string" name="config_alternateWebViewPackageName" />
+
+  <!-- kill app long press back -->
+  <java-symbol type="integer" name="config_backKillTimeout" />
+
 </resources>

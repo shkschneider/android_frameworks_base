@@ -50,7 +50,7 @@ import android.widget.Toast;
  */
 public class BackupRestoreConfirmation extends Activity {
     static final String TAG = "BackupRestoreConfirmation";
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
 
     static final String DID_ACKNOWLEDGE = "did_acknowledge";
 
@@ -128,7 +128,7 @@ public class BackupRestoreConfirmation extends Activity {
             }
         }
     }
-    
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -337,7 +337,7 @@ public class BackupRestoreConfirmation extends Activity {
         @Override
         public void onEndRestore() throws RemoteException {
             mHandler.sendEmptyMessage(MSG_END_RESTORE);
-        }        
+        }
 
         @Override
         public void onTimeout() throws RemoteException {

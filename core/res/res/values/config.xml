@@ -2304,7 +2304,7 @@
 
     <!-- Flag indicating device support for EAP SIM, AKA, AKA' -->
     <bool name="config_eap_sim_based_auth_supported">true</bool>
- 
+
     <!-- How long history of previous vibrations should be kept for the dumpsys. -->
     <integer name="config_previousVibrationsDumpLimit">20</integer>
 
@@ -2331,4 +2331,5 @@
     <!-- The BT name of the keyboard packaged with the device. If this is defined, SystemUI will
          automatically try to pair with it when the device exits tablet mode. -->
     <string translatable="false" name="config_packagedKeyboardName"></string>
-</resources>
+
+  </resources>

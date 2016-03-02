@@ -1522,8 +1522,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
 
         mUseTvRouting = AudioSystem.getPlatformType(mContext) == AudioSystem.PLATFORM_TELEVISION;
 
-        mBackKillTimeout = mContext.getResources().getInteger(com.android.internal.R.integer.config_backKillTimeout);
-
         readConfigurationDependentBehaviors();
 
         mAccessibilityManager = (AccessibilityManager) context.getSystemService(

@@ -389,6 +389,7 @@ public class BatteryMeterView extends View implements DemoMode,
                             : (tracker.level == 100 ? 0.38f : 0.5f)));
             mTextHeight = -mTextPaint.getFontMetrics().ascent;
             pctText = String.valueOf(SINGLE_DIGIT_PERCENT ? (level/10) : level);
+            if (pctText.length() > 2) pctText = "";
             pctX = mWidth * 0.5f;
             pctY = (mHeight + mTextHeight) * 0.47f;
             pctOpaque = levelTop > pctY;

@@ -5106,38 +5106,52 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                         }
                     }
                 }
+
                 if ((result & ACTION_PASS_TO_USER) == 0) {
+                    boolean mayChangeVolume = false;
                     if (isMusicActive()) {
                         if (mVolumeMusicControls) {
+                            // Detect long key presses.
                             if (down) {
-                                if (keyCode != KeyEvent.KEYCODE_VOLUME_MUTE) {
-                                    mIsLongPress = false;
-                                    int newKeyCode = event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP ?
-                                        KeyEvent.KEYCODE_MEDIA_NEXT : KeyEvent.KEYCODE_MEDIA_PREVIOUS;
-                                    final Message msg = mHandler.obtainMessage(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK,
-                                        new KeyEvent(event.getDownTime(), event.getEventTime(), event.getAction(), newKeyCode, 0));
-                                    msg.setAsynchronous(true);
-                                    mHandler.sendMessageDelayed(msg, ViewConfiguration.getLongPressTimeout());
-                                    break;
+                                mIsLongPress = false;
+                                // Map MUTE to MEDIA_PLAY_PAUSE
+                                int newKeyCode = KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE;
+                                switch (keyCode) {
+                                    case KeyEvent.KEYCODE_VOLUME_DOWN:
+                                        newKeyCode = KeyEvent.KEYCODE_MEDIA_PREVIOUS;
+                                        break;
+                                    case KeyEvent.KEYCODE_VOLUME_UP:
+                                        newKeyCode = KeyEvent.KEYCODE_MEDIA_NEXT;
+                                        break;
                                 }
+                                scheduleLongPressKeyEvent(event, newKeyCode);
+                                // Consume key down events of all presses.
+                                break;
                             } else {
                                 mHandler.removeMessages(MSG_DISPATCH_VOLKEY_WITH_WAKE_LOCK);
+                                // Consume key up events of long presses only.
                                 if (mIsLongPress) {
                                     break;
                                 }
+                                // Change volume only on key up events of short presses.
+                                mayChangeVolume = true;
                             }
-                        }
-                    } else {
-                        if (mUseTvRouting) {
-                            dispatchDirectAudioEvent(event);
                         } else {
-                            // If we aren't passing to the user and no one else handled it
-                            // sent it to the session manager to figure out.
-                            MediaSessionLegacyHelper.getHelper(mContext)
-                                .sendVolumeKeyEvent(event, true);
+                            // Long key press detection not application, change volume only on key down events
+                            mayChangeVolume = down;
                         }
-                        break;
                     }
+
+                    if (mayChangeVolume) {
+                        // If we aren't passing to the user and no one else handled it
+                        // send it to the session manager to figure out.
+
+                        // Rewrite the event to use key-down as sendVolumeKeyEvent will
+                        // only change the volume on key down.
+                        MediaSessionLegacyHelper.getHelper(mContext)
+                            .sendVolumeKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, keyCode), true);
+                    }
+                    break;
                 }
                 break;
             }

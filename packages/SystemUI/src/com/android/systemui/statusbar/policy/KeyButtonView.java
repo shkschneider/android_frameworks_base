@@ -200,6 +200,7 @@ public class KeyButtonView extends ImageView {
                     }
                 }
                 removeCallbacks(mCheckLongPress);
+                mPerformedLongClick = false;
                 break;
         }
 

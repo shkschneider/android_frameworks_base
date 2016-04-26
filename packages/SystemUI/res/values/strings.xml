@@ -1049,6 +1049,14 @@
     <!-- Preference to enable one finger quick settings pull down -->
     <string name="one_finger_quicksettings_pull_down">QuickSettings pull down</string>
 
+    <!-- Smart pulldown -->
+    <string name="smart_quicksettings_pull_down">Smart pull down</string>
+    <string name="smart_quicksettings_pull_down_summary">Open Quick Settings when there are %1$s notifications present</string>
+    <string name="smart_quicksettings_pull_down_off">Off</string>
+    <string name="smart_quicksettings_pull_down_dismissable">No dismissable</string>
+    <string name="smart_quicksettings_pull_down_persistent">No persistent</string>
+    <string name="smart_quicksettings_pull_down_all">No dismissable or persistent</string>
+
     <!-- Summary to enable one finger quick settings pull down -->
     <string name="one_finger_quicksettings_pull_down_summary">Allows it with only one finger (from the right of the status bar)</string>
     <!-- Preference to scramble the PIN layout on lockscreen -->

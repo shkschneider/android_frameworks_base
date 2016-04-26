@@ -2334,6 +2334,12 @@ public final class Settings {
             "one_finger_quicksettings_pull_down";
 
         /**
+         * Quick settings smart pull down
+         * @hide
+         */
+        public static final String SMART_QUICKSETTINGS_PULL_DOWN = "smart_quicksettings_pull_down";
+
+        /**
          * Whether to scramble a pin unlock layout
          * @hide
          */

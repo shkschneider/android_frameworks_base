@@ -33,7 +33,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
-import android.os.Handler;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.MathUtils;
@@ -222,10 +221,6 @@ public class NotificationPanelView extends PanelView implements
     private final Interpolator mTouchResponseInterpolator =
             new PathInterpolator(0.3f, 0f, 0.1f, 1f);
 
-    private Handler mHandler = new Handler();
-    private SettingsObserver mSettingsObserver;
-    private boolean mOneFingerQuickSettingsIntercept;
-
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setWillNotDraw(!DEBUG);
@@ -280,8 +275,6 @@ public class NotificationPanelView extends PanelView implements
                 }
             }
         });
-
-        mSettingsObserver = new SettingsObserver(mHandler);
     }
 
     @Override
@@ -370,16 +363,6 @@ public class NotificationPanelView extends PanelView implements
             mQsContainer.setHeightOverride(mQsContainer.getDesiredHeight());
         }
         updateMaxHeadsUpTranslation();
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        mSettingsObserver.observe();
-    }
-
-    @Override
-    public void onDetachedFromWindow() {
-        mSettingsObserver.unobserve();
     }
 
     private void startQsSizeChangeAnimation(int oldHeight, final int newHeight) {
@@ -816,6 +799,8 @@ public class NotificationPanelView extends PanelView implements
         final int pointerCount = event.getPointerCount();
         final int action = event.getActionMasked();
 
+        boolean showQsOverride = false;
+
         final boolean twoFingerDrag = action == MotionEvent.ACTION_POINTER_DOWN
                 && pointerCount == 2;
 
@@ -833,12 +818,19 @@ public class NotificationPanelView extends PanelView implements
             final float w = getMeasuredWidth();
             final float x = event.getX();
             float region = (w * (1.f/4.f)); // 1/4
-            boolean showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x)
+            showQsOverride = isLayoutRtl() ? (x < region) : (w - region < x)
                 && mStatusBarState == StatusBarState.SHADE;
-            return twoFingerDrag || showQsOverride || stylusButtonClickDrag || mouseButtonClickDrag;
         }
 
-        return twoFingerDrag || stylusButtonClickDrag || mouseButtonClickDrag;
+        final int smartQuickSettingsPullDown = Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.SMART_QUICKSETTINGS_PULL_DOWN, 3);
+        if ((smartQuickSettingsPullDown == 1 && ! mStatusBar.hasActiveClearableNotifications())
+            || (smartQuickSettingsPullDown == 2 && ! mStatusBar.hasActiveVisibleNotifications())
+            || (smartQuickSettingsPullDown == 3 && ! mStatusBar.hasActiveVisibleNotifications() && ! mStatusBar.hasActiveClearableNotifications())) {
+            showQsOverride = true;
+        }
+
+        return twoFingerDrag || showQsOverride || stylusButtonClickDrag || mouseButtonClickDrag;
     }
 
     private void handleQsDown(MotionEvent event) {
@@ -2414,40 +2406,6 @@ public class NotificationPanelView extends PanelView implements
 
     protected boolean isPanelVisibleBecauseOfHeadsUp() {
         return mHeadsUpManager.hasPinnedHeadsUp() || mHeadsUpAnimatingAway;
-    }
-
-    class SettingsObserver extends ContentObserver {
-        SettingsObserver(Handler handler) {
-            super(handler);
-        }
-
-        void observe() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN), false, this);
-            update();
-        }
-
-        void unobserve() {
-            ContentResolver resolver = mContext.getContentResolver();
-            resolver.unregisterContentObserver(this);
-        }
-
-        @Override
-        public void onChange(boolean selfChange) {
-            update();
-        }
-
-        @Override
-        public void onChange(boolean selfChange, Uri uri) {
-            update();
-        }
-
-        public void update() {
-            ContentResolver resolver = mContext.getContentResolver();
-            mOneFingerQuickSettingsIntercept = Settings.System.getInt(
-                    resolver, Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0) == 1;
-        }
     }
 
     @Override

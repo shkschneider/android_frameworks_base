@@ -33,6 +33,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.MathUtils;
@@ -812,8 +813,8 @@ public class NotificationPanelView extends PanelView implements
                 && (event.isButtonPressed(MotionEvent.BUTTON_SECONDARY)
                         || event.isButtonPressed(MotionEvent.BUTTON_TERTIARY));
 
-        final boolean oneFingerQuickSettingsPullDown = (Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0) == 1);
+        final boolean oneFingerQuickSettingsPullDown = (Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0, UserHandle.USER_CURRENT) == 1);
         if (oneFingerQuickSettingsPullDown) {
             final float w = getMeasuredWidth();
             final float x = event.getX();
@@ -822,8 +823,8 @@ public class NotificationPanelView extends PanelView implements
                 && mStatusBarState == StatusBarState.SHADE;
         }
 
-        final int smartQuickSettingsPullDown = Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.SMART_QUICKSETTINGS_PULL_DOWN, 3);
+        final int smartQuickSettingsPullDown = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.SMART_QUICKSETTINGS_PULL_DOWN, 3, UserHandle.USER_CURRENT);
         if ((smartQuickSettingsPullDown == 1 && ! mStatusBar.hasActiveClearableNotifications())
             || (smartQuickSettingsPullDown == 2 && ! mStatusBar.hasActiveVisibleNotifications())
             || (smartQuickSettingsPullDown == 3 && ! mStatusBar.hasActiveVisibleNotifications() && ! mStatusBar.hasActiveClearableNotifications())) {

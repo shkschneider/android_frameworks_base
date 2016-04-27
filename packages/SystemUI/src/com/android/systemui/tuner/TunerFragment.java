@@ -26,6 +26,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.UserHandle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -102,8 +103,8 @@ public class TunerFragment extends PreferenceFragment {
         mOneFingerQuickSettingsPullDown = (SwitchPreference) findPreference(KEY_ONE_FINGER_QUICKSETTINGS_PULL_DOWN);
         mSmartQuickSettingsPullDown = (ListPreference) findPreference(KEY_SMART_QUICKSETTINGS_PULL_DOWN);
         mPinScramble = (SwitchPreference) findPreference(KEY_PIN_SCRAMBLE);
-        if (Settings.Secure.getInt(getContext().getContentResolver(), SETTING_SEEN_TUNER_WARNING,
-                0) == 0) {
+        if (Settings.Secure.getIntForUser(getContext().getContentResolver(),
+                SETTING_SEEN_TUNER_WARNING, 0, UserHandle.USER_CURRENT) == 0) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.tuner_warning_title)
                     .setMessage(R.string.tuner_warning)
@@ -195,21 +196,22 @@ public class TunerFragment extends PreferenceFragment {
 
     private void updateBatteryPct() {
         mBatteryPct.setOnPreferenceChangeListener(null);
-        mBatteryPct.setChecked(System.getInt(getContext().getContentResolver(),
-                SHOW_PERCENT_SETTING, 0) != 0);
+        mBatteryPct.setChecked(System.getIntForUser(getContext().getContentResolver(),
+                SHOW_PERCENT_SETTING, 0, UserHandle.USER_CURRENT) != 0);
         mBatteryPct.setOnPreferenceChangeListener(mBatteryPctChange);
     }
 
     private void updateOneFingerQuickSettingsPullDown() {
         mOneFingerQuickSettingsPullDown.setOnPreferenceChangeListener(null);
-        mOneFingerQuickSettingsPullDown.setChecked(Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0) == 1);
+        mOneFingerQuickSettingsPullDown.setChecked(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, 0, UserHandle.USER_CURRENT) == 1);
         mOneFingerQuickSettingsPullDown.setOnPreferenceChangeListener(mOneFingerQuickSettingsPullDownChange);
     }
 
     private void updateSmartQuickSettingsPullDown() {
         mSmartQuickSettingsPullDown.setOnPreferenceChangeListener(null);
-        final int smartQuickSettingsPullDown = Settings.System.getInt(getContext().getContentResolver(), Settings.System.SMART_QUICKSETTINGS_PULL_DOWN, 3);
+        final int smartQuickSettingsPullDown = Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.SMART_QUICKSETTINGS_PULL_DOWN, 3, UserHandle.USER_CURRENT);
         mSmartQuickSettingsPullDown.setValue(String.valueOf(smartQuickSettingsPullDown));
         updateSmartQuickSettingsPullDownSummary(smartQuickSettingsPullDown);
         mSmartQuickSettingsPullDown.setOnPreferenceChangeListener(mSmartQuickSettingsPullDownChange);
@@ -217,22 +219,22 @@ public class TunerFragment extends PreferenceFragment {
 
     private void updatePinScramble() {
         mPinScramble.setOnPreferenceChangeListener(null);
-        mPinScramble.setChecked(Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.LOCKSCREEN_PIN_SCRAMBLE, 0) == 1);
+        mPinScramble.setChecked(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.LOCKSCREEN_PIN_SCRAMBLE, 0, UserHandle.USER_CURRENT) == 1);
         mPinScramble.setOnPreferenceChangeListener(mPinScrambleChange);
     }
 
     private void updateVolumeRocker() {
         mVolumeRocker.setOnPreferenceChangeListener(null);
-        mVolumeRocker.setChecked(Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.VOLUME_MUSIC_CONTROLS, 0) == 1);
+        mVolumeRocker.setChecked(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.VOLUME_MUSIC_CONTROLS, 0, UserHandle.USER_CURRENT) == 1);
         mVolumeRocker.setOnPreferenceChangeListener(mVolumeRockerChange);
     }
 
     private void updateBrightnessSlider() {
         mBrightnessSlider.setOnPreferenceChangeListener(null);
-        mBrightnessSlider.setChecked(Settings.System.getInt(getContext().getContentResolver(),
-                Settings.System.SHOW_BRIGHTNESS_SLIDER, 1) == 1);
+        mBrightnessSlider.setChecked(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.SHOW_BRIGHTNESS_SLIDER, 1, UserHandle.USER_CURRENT) == 1);
         mBrightnessSlider.setOnPreferenceChangeListener(mBrightnessSliderChange);
     }
 
@@ -258,7 +260,7 @@ public class TunerFragment extends PreferenceFragment {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
             MetricsLogger.action(getContext(), MetricsLogger.TUNER_BATTERY_PERCENTAGE, v);
-            System.putInt(getContext().getContentResolver(), SHOW_PERCENT_SETTING, v ? 1 : 0);
+            System.putIntForUser(getContext().getContentResolver(), SHOW_PERCENT_SETTING, v ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         }
     };
@@ -266,7 +268,7 @@ public class TunerFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
-            System.putInt(getContext().getContentResolver(), Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, v ? 1 : 0);
+            System.putIntForUser(getContext().getContentResolver(), Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, v ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         }
     };
@@ -274,7 +276,7 @@ public class TunerFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final int v = Integer.valueOf((String) newValue);
-            System.putInt(getContext().getContentResolver(), Settings.System.SMART_QUICKSETTINGS_PULL_DOWN, v);
+            System.putIntForUser(getContext().getContentResolver(), Settings.System.SMART_QUICKSETTINGS_PULL_DOWN, v, UserHandle.USER_CURRENT);
             updateSmartQuickSettingsPullDownSummary(v);
             return true;
         }
@@ -283,7 +285,7 @@ public class TunerFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
-            System.putInt(getContext().getContentResolver(), Settings.System.LOCKSCREEN_PIN_SCRAMBLE, v ? 1 : 0);
+            System.putIntForUser(getContext().getContentResolver(), Settings.System.LOCKSCREEN_PIN_SCRAMBLE, v ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         }
     };
@@ -291,7 +293,7 @@ public class TunerFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
-            System.putInt(getContext().getContentResolver(), Settings.System.VOLUME_MUSIC_CONTROLS, v ? 1 : 0);
+            System.putIntForUser(getContext().getContentResolver(), Settings.System.VOLUME_MUSIC_CONTROLS, v ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         }
     };
@@ -299,7 +301,7 @@ public class TunerFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
-            System.putInt(getContext().getContentResolver(), Settings.System.SHOW_BRIGHTNESS_SLIDER, v ? 1 : 0);
+            System.putIntForUser(getContext().getContentResolver(), Settings.System.SHOW_BRIGHTNESS_SLIDER, v ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         }
     };

@@ -48,8 +48,6 @@ import java.util.List;
 
 public class TunerService extends SystemUI {
 
-    public static final String ACTION_CLEAR = "com.android.systemui.action.CLEAR_TUNER";
-
     private final Observer mObserver = new Observer();
     // Map of Uris we listen on to their settings keys.
     private final ArrayMap<Uri, String> mListeningUris = new ArrayMap<>();
@@ -132,25 +130,6 @@ public class TunerService extends SystemUI {
         }
     }
 
-    public void clearAll() {
-        // A couple special cases.
-        Settings.Global.putString(mContentResolver, DemoMode.DEMO_MODE_ALLOWED, null);
-        Settings.System.putString(mContentResolver, BatteryMeterView.SHOW_PERCENT_SETTING, null);
-        // Custom cases.
-        Settings.System.putStringForUser(mContentResolver, Settings.System.LOCKSCREEN_PIN_SCRAMBLE, null, mCurrentUser);
-        Settings.System.putStringForUser(mContentResolver, Settings.System.ONE_FINGER_QUICKSETTINGS_PULL_DOWN, null, mCurrentUser);
-        Settings.System.putStringForUser(mContentResolver, Settings.System.SMART_QUICKSETTINGS_PULL_DOWN, null, mCurrentUser);
-        Settings.System.putStringForUser(mContentResolver, Settings.System.VOLUME_MUSIC_CONTROLS, null, mCurrentUser);
-        Settings.System.putStringForUser(mContentResolver, Settings.System.SHOW_BRIGHTNESS_SLIDER, null, mCurrentUser);
-        Intent intent = new Intent(DemoMode.ACTION_DEMO);
-        intent.putExtra(DemoMode.EXTRA_COMMAND, DemoMode.COMMAND_EXIT);
-        mContext.sendBroadcast(intent);
-
-        for (String key : mTunableLookup.keySet()) {
-            Settings.Secure.putString(mContentResolver, key, null);
-        }
-    }
-
     // Only used in other processes, such as the tuner.
     private static TunerService sInstance;
 
@@ -174,31 +153,6 @@ public class TunerService extends SystemUI {
         return sInstance;
     }
 
-    public static final void showResetRequest(final Context context, final Runnable onDisabled) {
-        SystemUIDialog dialog = new SystemUIDialog(context);
-        dialog.setShowForAllUsers(true);
-        dialog.setMessage(R.string.remove_from_settings_prompt);
-        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, context.getString(R.string.cancel),
-                (OnClickListener) null);
-        dialog.setButton(DialogInterface.BUTTON_POSITIVE,
-                context.getString(R.string.guest_exit_guest_dialog_remove), new OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Tell the tuner (in main SysUI process) to clear all its settings.
-                context.sendBroadcast(new Intent(TunerService.ACTION_CLEAR));
-                // Disable access to tuner.
-                TunerService.setTunerEnabled(context, false);
-                // Make them sit through the warning dialog again.
-                Settings.Secure.putInt(context.getContentResolver(),
-                        TunerFragment.SETTING_SEEN_TUNER_WARNING, 0);
-                if (onDisabled != null) {
-                    onDisabled.run();
-                }
-            }
-        });
-        dialog.show();
-    }
-
     public static final void setTunerEnabled(Context context, boolean enabled) {
         userContext(context).getPackageManager().setComponentEnabledSetting(
                 new ComponentName(context, TunerActivity.class),
@@ -208,9 +162,13 @@ public class TunerService extends SystemUI {
     }
 
     public static final boolean isTunerEnabled(Context context) {
-        return userContext(context).getPackageManager().getComponentEnabledSetting(
+        final boolean enabled = userContext(context).getPackageManager().getComponentEnabledSetting(
                 new ComponentName(context, TunerActivity.class))
                 == PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
+        if (! enabled) {
+            setTunerEnabled(context, true);
+        }
+        return true;
     }
 
     private static Context userContext(Context context) {
@@ -237,14 +195,5 @@ public class TunerService extends SystemUI {
 
     public interface Tunable {
         void onTuningChanged(String key, String newValue);
-    }
-
-    public static class ClearReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (ACTION_CLEAR.equals(intent.getAction())) {
-                get(context).clearAll();
-            }
-        }
     }
 }

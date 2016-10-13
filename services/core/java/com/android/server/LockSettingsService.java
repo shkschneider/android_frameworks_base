@@ -543,8 +543,10 @@ public class LockSettingsService extends ILockSettings.Stub {
 
                    @Override
                    public byte[] toHash(String pattern, int userId) {
+                       final byte lockPatternSize = getLockPatternSize(userId);
                        return LockPatternUtils.patternToHash(
-                               LockPatternUtils.stringToPattern(pattern));
+                               LockPatternUtils.stringToPattern(pattern, lockPatternSize),
+                               lockPatternSize);
                    }
 
                    @Override
@@ -781,7 +783,8 @@ public class LockSettingsService extends ILockSettings.Stub {
         Secure.LOCK_PATTERN_ENABLED,
         Secure.LOCK_BIOMETRIC_WEAK_FLAGS,
         Secure.LOCK_PATTERN_VISIBLE,
-        Secure.LOCK_PATTERN_TACTILE_FEEDBACK_ENABLED
+        Secure.LOCK_PATTERN_TACTILE_FEEDBACK_ENABLED,
+        Secure.LOCK_PATTERN_SIZE
     };
 
     // Reading these settings needs the contacts permission
@@ -834,5 +837,9 @@ public class LockSettingsService extends ILockSettings.Stub {
 
         Slog.e(TAG, "Unable to acquire GateKeeperService");
         return null;
+    }
+
+    public byte getLockPatternSize(int userId) {
+        return mStorage.getLockPatternSize(userId);
     }
 }

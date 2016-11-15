@@ -21,12 +21,16 @@ import android.annotation.StringRes;
 import android.app.INotificationManager;
 import android.app.ITransientNotification;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.ServiceManager;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -60,7 +64,7 @@ import java.lang.annotation.RetentionPolicy;
  * <a href="{@docRoot}guide/topics/ui/notifiers/toasts.html">Toast Notifications</a> developer
  * guide.</p>
  * </div>
- */ 
+ */
 public class Toast {
     static final String TAG = "Toast";
     static final boolean localLOGV = false;
@@ -104,7 +108,7 @@ public class Toast {
         mTN.mGravity = context.getResources().getInteger(
                 com.android.internal.R.integer.config_toastDefaultGravity);
     }
-    
+
     /**
      * Show the view for the specified duration.
      */
@@ -139,7 +143,7 @@ public class Toast {
             // Empty
         }
     }
-    
+
     /**
      * Set the view to show.
      * @see #getView
@@ -173,7 +177,7 @@ public class Toast {
     public int getDuration() {
         return mDuration;
     }
-    
+
     /**
      * Set the margins of the view.
      *
@@ -229,7 +233,7 @@ public class Toast {
     public int getXOffset() {
         return mTN.mX;
     }
-    
+
     /**
      * Return the Y offset in pixels to apply to the gravity's location.
      */
@@ -244,7 +248,7 @@ public class Toast {
     public WindowManager.LayoutParams getWindowParams() {
         return mTN.mParams;
     }
-    
+
     /**
      * Make a standard toast that just contains a text view.
      *
@@ -263,7 +267,7 @@ public class Toast {
         View v = inflate.inflate(com.android.internal.R.layout.transient_notification, null);
         TextView tv = (TextView)v.findViewById(com.android.internal.R.id.message);
         tv.setText(text);
-        
+
         result.mNextView = v;
         result.mDuration = duration;
 
@@ -293,7 +297,7 @@ public class Toast {
     public void setText(@StringRes int resId) {
         setText(mContext.getText(resId));
     }
-    
+
     /**
      * Update the text in a Toast that was previously created using one of the makeText() methods.
      * @param s The new text for the Toast.
@@ -342,7 +346,7 @@ public class Toast {
         };
 
         private final WindowManager.LayoutParams mParams = new WindowManager.LayoutParams();
-        final Handler mHandler = new Handler();    
+        final Handler mHandler = new Handler();
 
         int mGravity;
         int mX, mY;
@@ -400,6 +404,21 @@ public class Toast {
                 if (context == null) {
                     context = mView.getContext();
                 }
+                // Application icon
+                boolean toastAppIcon = (Settings.System.getIntForUser(context.getContentResolver(),
+                        Settings.System.TOAST_APP_ICON, 1, UserHandle.USER_CURRENT) == 1);
+                ImageView appIcon = (ImageView) mView.findViewById(android.R.id.icon);
+                appIcon.setVisibility(toastAppIcon ? View.VISIBLE : View.INVISIBLE);
+                if (appIcon != null && toastAppIcon) {
+                    PackageManager pm = context.getPackageManager();
+                    Drawable icon = null;
+                    try {
+                        icon = pm.getApplicationIcon(packageName);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        // nothing to do
+                    }
+                    appIcon.setImageDrawable(icon);
+                }
                 mWM = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
                 // We can resolve the Gravity here by using the Locale for getting
                 // the layout direction
@@ -441,7 +460,7 @@ public class Toast {
             event.setPackageName(mView.getContext().getPackageName());
             mView.dispatchPopulateAccessibilityEvent(event);
             accessibilityManager.sendAccessibilityEvent(event);
-        }        
+        }
 
         public void handleHide() {
             if (localLOGV) Log.v(TAG, "HANDLE HIDE: " + this + " mView=" + mView);

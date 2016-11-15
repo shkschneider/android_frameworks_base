@@ -92,6 +92,12 @@
         android:persistent="false" />
 
     <SwitchPreference
+        android:key="toast_app_icon"
+        android:title="@string/toast_app_icon"
+        android:summary="@string/toast_app_icon_summary"
+        android:persistent="false" />
+
+    <SwitchPreference
         android:key="volume_rocker"
         android:title="@string/volume_rocker"
         android:summary="@string/volume_rocker_summary"

@@ -1065,6 +1065,10 @@
     <!-- Summary for scrambled PIN layout on lockscreen -->
     <string name="pin_scramble_summary">Scrambles the PIN layout on lockscreen</string>
 
+    <!-- Preference for Toast app icon -->
+    <string name="toast_app_icon">Toast application icon</string>
+    <string name="toast_app_icon_summary">Shows the application icon in a Toast</string>
+
     <!-- Preference to enable volume rocker -->
     <string name="volume_rocker">Volume rocker</string>
 

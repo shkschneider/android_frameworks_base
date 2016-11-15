@@ -2346,6 +2346,12 @@ public final class Settings {
         public static final String LOCKSCREEN_PIN_SCRAMBLE = "lockscreen_pin_scramble";
 
         /**
+         * Whether to scramble a pin unlock layout
+         * @hide
+         */
+        public static final String TOAST_APP_ICON = "toast_app_icon";
+
+        /**
          * A formatted string of the next alarm that is set, or the empty string
          * if there is no alarm set.
          *

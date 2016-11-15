@@ -56,6 +56,7 @@ public class TunerFragment extends PreferenceFragment {
         "one_finger_quicksettings_pull_down";
     private static final String KEY_SMART_QUICKSETTINGS_PULL_DOWN = "smart_quicksettings_pull_down";
     private static final String KEY_PIN_SCRAMBLE = "pin_scramble";
+    private static final String KEY_TOAST_APP_ICON = "toast_app_icon";
     private static final String KEY_VOLUME_ROCKER = "volume_rocker";
     private static final String KEY_BRIGHTNESS_SLIDER = "brightness_slider";
 
@@ -67,6 +68,7 @@ public class TunerFragment extends PreferenceFragment {
     private SwitchPreference mOneFingerQuickSettingsPullDown;
     private ListPreference mSmartQuickSettingsPullDown;
     private SwitchPreference mPinScramble;
+    private SwitchPreference mToastAppIcon;
     private SwitchPreference mVolumeRocker;
     private SwitchPreference mBrightnessSlider;
 
@@ -101,6 +103,7 @@ public class TunerFragment extends PreferenceFragment {
         mOneFingerQuickSettingsPullDown = (SwitchPreference) findPreference(KEY_ONE_FINGER_QUICKSETTINGS_PULL_DOWN);
         mSmartQuickSettingsPullDown = (ListPreference) findPreference(KEY_SMART_QUICKSETTINGS_PULL_DOWN);
         mPinScramble = (SwitchPreference) findPreference(KEY_PIN_SCRAMBLE);
+        mToastAppIcon = (SwitchPreference) findPreference(KEY_TOAST_APP_ICON);
         if (Settings.Secure.getIntForUser(getContext().getContentResolver(),
                 SETTING_SEEN_TUNER_WARNING, 0, UserHandle.USER_CURRENT) == 0) {
             new AlertDialog.Builder(getContext())
@@ -125,6 +128,7 @@ public class TunerFragment extends PreferenceFragment {
         updateOneFingerQuickSettingsPullDown();
         updateSmartQuickSettingsPullDown();
         updatePinScramble();
+        updateToastAppIcon();
         updateVolumeRocker();
         updateBrightnessSlider();
         getContext().getContentResolver().registerContentObserver(
@@ -209,6 +213,13 @@ public class TunerFragment extends PreferenceFragment {
         mPinScramble.setOnPreferenceChangeListener(mPinScrambleChange);
     }
 
+    private void updateToastAppIcon() {
+        mToastAppIcon.setOnPreferenceChangeListener(null);
+        mToastAppIcon.setChecked(Settings.System.getIntForUser(getContext().getContentResolver(),
+                Settings.System.TOAST_APP_ICON, 1, UserHandle.USER_CURRENT) == 1);
+        mToastAppIcon.setOnPreferenceChangeListener(mToastAppIconChange);
+    }
+
     private void updateVolumeRocker() {
         mVolumeRocker.setOnPreferenceChangeListener(null);
         mVolumeRocker.setChecked(Settings.System.getIntForUser(getContext().getContentResolver(),
@@ -235,6 +246,7 @@ public class TunerFragment extends PreferenceFragment {
             updateOneFingerQuickSettingsPullDown();
             updateSmartQuickSettingsPullDown();
             updatePinScramble();
+            updateToastAppIcon();
             updateVolumeRocker();
             updateBrightnessSlider();
         }
@@ -271,6 +283,14 @@ public class TunerFragment extends PreferenceFragment {
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
             System.putIntForUser(getContext().getContentResolver(), Settings.System.LOCKSCREEN_PIN_SCRAMBLE, v ? 1 : 0, UserHandle.USER_CURRENT);
+            return true;
+        }
+    };
+    private final OnPreferenceChangeListener mToastAppIconChange = new OnPreferenceChangeListener() {
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            final boolean v = (Boolean) newValue;
+            System.putIntForUser(getContext().getContentResolver(), Settings.System.TOAST_APP_ICON, v ? 1 : 0, UserHandle.USER_CURRENT);
             return true;
         }
     };

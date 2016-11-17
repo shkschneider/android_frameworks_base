@@ -215,8 +215,8 @@ public class TunerFragment extends PreferenceFragment {
 
     private void updateToastAppIcon() {
         mToastAppIcon.setOnPreferenceChangeListener(null);
-        mToastAppIcon.setChecked(Settings.System.getIntForUser(getContext().getContentResolver(),
-                Settings.System.TOAST_APP_ICON, 1, UserHandle.USER_CURRENT) == 1);
+        mToastAppIcon.setChecked(Settings.System.getInt(getContext().getContentResolver(),
+                Settings.System.TOAST_APP_ICON, 1) == 1);
         mToastAppIcon.setOnPreferenceChangeListener(mToastAppIconChange);
     }
 
@@ -290,7 +290,7 @@ public class TunerFragment extends PreferenceFragment {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             final boolean v = (Boolean) newValue;
-            System.putIntForUser(getContext().getContentResolver(), Settings.System.TOAST_APP_ICON, v ? 1 : 0, UserHandle.USER_CURRENT);
+            System.putInt(getContext().getContentResolver(), Settings.System.TOAST_APP_ICON, v ? 1 : 0);
             return true;
         }
     };

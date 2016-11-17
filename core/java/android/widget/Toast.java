@@ -29,7 +29,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.RemoteException;
 import android.os.ServiceManager;
-import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
@@ -405,8 +404,8 @@ public class Toast {
                     context = mView.getContext();
                 }
                 // Application icon
-                boolean toastAppIcon = (Settings.System.getIntForUser(context.getContentResolver(),
-                        Settings.System.TOAST_APP_ICON, 1, UserHandle.USER_CURRENT) == 1);
+                boolean toastAppIcon = (Settings.System.getInt(context.getContentResolver(),
+                        Settings.System.TOAST_APP_ICON, 1) == 1);
                 ImageView appIcon = (ImageView) mView.findViewById(android.R.id.icon);
                 appIcon.setVisibility(toastAppIcon ? View.VISIBLE : View.INVISIBLE);
                 if (appIcon != null && toastAppIcon) {

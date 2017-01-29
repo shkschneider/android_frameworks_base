@@ -407,16 +407,21 @@ public class Toast {
                 boolean toastAppIcon = (Settings.System.getInt(context.getContentResolver(),
                         Settings.System.TOAST_APP_ICON, 1) == 1);
                 ImageView appIcon = (ImageView) mView.findViewById(android.R.id.icon);
-                appIcon.setVisibility(toastAppIcon ? View.VISIBLE : View.INVISIBLE);
-                if (appIcon != null && toastAppIcon) {
-                    PackageManager pm = context.getPackageManager();
-                    Drawable icon = null;
-                    try {
-                        icon = pm.getApplicationIcon(packageName);
-                    } catch (PackageManager.NameNotFoundException e) {
-                        // nothing to do
+                if (appIcon != null) {
+                    if (toastAppIcon) {
+                        appIcon.setVisibility(View.VISIBLE);
+                        PackageManager pm = context.getPackageManager();
+                        Drawable icon = null;
+                        try {
+                            icon = pm.getApplicationIcon(packageName);
+                        } catch (PackageManager.NameNotFoundException e) {
+                            // nothing to do
+                        }
+                        appIcon.setImageDrawable(icon);
                     }
-                    appIcon.setImageDrawable(icon);
+                    else {
+                        appIcon.setVisibility(View.INVISIBLE);
+                    }
                 }
                 mWM = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
                 // We can resolve the Gravity here by using the Locale for getting
